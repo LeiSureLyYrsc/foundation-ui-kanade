@@ -20,6 +20,7 @@ import { VARIANTS } from '../tray/trayModel.js'
 //     cancel(token)           the menu ended without a choice (Escape, a press outside)
 //     loaded()
 //   }
+// The optional start-page slot receives the current { state, token } for the popup. The menu owns sizing, focus and dismissal.
 const props = defineProps({ transport: { type: Object, required: true } })
 
 const gen = ref(0)
@@ -94,7 +95,11 @@ defineExpose({ onOpen, onClose, onSize, state })
 
 <template>
   <div v-if="shown" class="m-tray-host" :class="{ 'is-top': edge === 'top' }" :style="{ inset: `${POPUP_PAD}px` }">
-    <MTrayMenu :key="gen" :model="model" :state="state" :edge="edge" :max-height="maxHeight" focus :apply="apply" :sized="onSize" @layout="layout" @act="answer" @close="answer(null)" />
+    <MTrayMenu :key="gen" :model="model" :state="state" :edge="edge" :max-height="maxHeight" focus :apply="apply" :sized="onSize" @layout="layout" @act="answer" @close="answer(null)">
+      <template v-if="$slots['start-page']" #start-page>
+        <slot name="start-page" :state="state" :token="token" />
+      </template>
+    </MTrayMenu>
   </div>
 </template>
 

@@ -254,6 +254,7 @@ defineExpose({ nav, back, open, go, focusFirst, editing, touch })
               <button class="m-tray__back" type="button" :aria-label="t.back" @click="back"><MIcon name="arrow_back" /><span v-if="model.variant === 'v1'" class="m-tray__bar-title">{{ pageTitle(nav.current) }}</span></button>
               <span v-if="model.variant !== 'v1'" class="m-tray__bar-title">{{ pageTitle(nav.current) }}</span>
             </div>
+            <slot v-if="nav.current === model.root" name="start-page" />
             <TransitionGroup name="m-tray-row">
               <MTrayRow v-for="(row, ri) in rowsOf(nav.current)" :key="rowKey(row, ri)" :row="row" :state="viewState" @act="act" @open="open" @layout="setLayout" @done="toggleEdit" :apply="apply" />
             </TransitionGroup>
@@ -262,6 +263,7 @@ defineExpose({ nav, back, open, go, focusFirst, editing, touch })
         <!-- pager: every page side by side on a track; it is placed by `placeTrack` (the page's index, and the finger's offset while one moves it) -->
         <div v-else ref="track" class="m-tray__track">
           <div v-for="name in model.order" :key="name" class="m-tray__page" :data-page="name" :inert="name !== nav.current || undefined">
+            <slot v-if="name === model.order[0] && !editing" name="start-page" />
             <TransitionGroup name="m-tray-row">
               <MTrayRow v-for="(row, ri) in rowsOf(name)" :key="rowKey(row, ri)" :row="row" :state="viewState" @act="act" @open="open" @layout="setLayout" @done="toggleEdit" :apply="apply" />
             </TransitionGroup>
